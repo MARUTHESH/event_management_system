@@ -38,4 +38,4 @@ python manage.py runserver
 
 ### 2. Open your browser and navigate to http://127.0.0.1:8000/
 
-### 3. You can now start using the application. All the endpoints are listed in the assignment.postman_collection of APIs.
+### 3. You can now start using the application. All the endpoints are listed in the assignment.postman_collection.json of APIs.
