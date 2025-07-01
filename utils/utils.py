@@ -20,7 +20,7 @@ def get_current_time_in_timezone(usr_timezone='Asia/Kolkata'):
     return time
 
 
-def covert_time_to_timezone(time, usr_timezone='Asia/Kolkata'):
+def convert_ist_to_any_timezone(time, usr_timezone='Asia/Kolkata'):
     """
     :param time: Time to be converted
     :param usr_timezone: Timezone of the user
@@ -31,6 +31,20 @@ def covert_time_to_timezone(time, usr_timezone='Asia/Kolkata'):
     u_tz = ZoneInfo(usr_timezone)
     time = time.astimezone(u_tz)
     return time
+
+
+def convert_anytime_to_ist(dt):
+    if isinstance(dt, str):
+        # Convert string with timezone into datetime
+        dt = datetime.fromisoformat(dt.replace("Z", "+00:00"))  # handle Zulu UTC
+
+    if dt.tzinfo is None:
+        # Assume input is in UTC if naive
+        dt = dt.replace(tzinfo=ZoneInfo('UTC'))
+
+    # Convert to IST
+    return dt.astimezone(ZoneInfo('Asia/Kolkata'))
+
 
 
 class Pagination:

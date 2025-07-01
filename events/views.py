@@ -9,7 +9,8 @@ from rest_framework import status
 from events.serializers import (EventSerializer, EventRegistrationSerializer,
                                 EventAttendeesSerializer, EventValidationSerializer)
 from events.models import Event, EventRegistration
-from utils.utils import (get_current_time_in_timezone, covert_time_to_timezone, Pagination)
+from utils.utils import (get_current_time_in_timezone, convert_ist_to_any_timezone, Pagination,
+                         convert_anytime_to_ist)
 
 
 
@@ -28,8 +29,8 @@ class EventView(APIView):
         """
         request_data = request.data
         # Converting time to IST timezone
-        request_data['start_time'] = covert_time_to_timezone(request_data['start_time'])
-        request_data['end_time'] = covert_time_to_timezone(request_data['end_time'])
+        request_data['start_time'] = convert_anytime_to_ist(request_data['start_time'])
+        request_data['end_time'] = convert_anytime_to_ist(request_data['end_time'])
         serializer = EventSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
@@ -54,8 +55,10 @@ class EventView(APIView):
         # Identifying the status of the event
         for event in data:
             status = 'closed'
-            end_time = covert_time_to_timezone(event['end_time'])
-            start_time = covert_time_to_timezone(event['start_time'])
+            start_time = convert_ist_to_any_timezone(event['start_time'], user_timezone)
+            end_time = convert_ist_to_any_timezone(event['end_time'], user_timezone)
+            event['start_time'] = start_time
+            event['end_time'] = end_time
             if start_time >= timeframe:
                 status = 'open'
             elif timeframe >= start_time and timeframe <= end_time:
