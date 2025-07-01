@@ -32,7 +32,7 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
         fields = ['attendee_name', 'attendee_email']
 
     def validate(self, data):
-        event = Event.objects.filter(id=self.context['event_id']).first()
+        event = Event.objects.select_for_update().get(id=self.context['event_id'])
 
         # Check if registration count is less than max capacity
         if event.eventregistration_set.count() >= event.max_capacity:
