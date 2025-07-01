@@ -34,6 +34,9 @@ def convert_ist_to_any_timezone(time, usr_timezone='Asia/Kolkata'):
 
 
 def convert_anytime_to_ist(dt):
+    if not dt:
+        return None
+
     if isinstance(dt, str):
         # Convert string with timezone into datetime
         dt = datetime.fromisoformat(dt.replace("Z", "+00:00"))  # handle Zulu UTC

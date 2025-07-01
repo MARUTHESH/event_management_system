@@ -29,8 +29,8 @@ class EventView(APIView):
         """
         request_data = request.data
         # Converting time to IST timezone
-        request_data['start_time'] = convert_anytime_to_ist(request_data['start_time'])
-        request_data['end_time'] = convert_anytime_to_ist(request_data['end_time'])
+        request_data['start_time'] = convert_anytime_to_ist(request_data.get('start_time'))
+        request_data['end_time'] = convert_anytime_to_ist(request_data.get('end_time'))
         serializer = EventSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
@@ -107,6 +107,11 @@ class EventAttendees(APIView):
         """
         # Getting offset, limit and timezone from the request
         pagination = Pagination(request)
+
+        # Check if the event exists
+        event_validation_serializer = EventValidationSerializer(data=request.data, context={'event_id': event_id})
+        if not event_validation_serializer.is_valid():
+            return Response(event_validation_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Serialize the registrations
         registrations = EventRegistration.objects.filter(
